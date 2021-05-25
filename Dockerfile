@@ -10,9 +10,7 @@ RUN echo "assemble minimal main image" # keep here to help --cache-from along
 
 LABEL MAINTAINERS="Elias Leinenweber <elias.leinenweber@free.fr>"
 
-RUN apt update
-
-RUN apt install -qq -y \
+RUN apt update && apt install -qq -y --no-install-recommends \
     dblatex
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -26,7 +24,7 @@ LABEL MAINTAINERS="Elias Leinenweber <elias.leinenweber@free.fr>"
 
 # Installing packages required for the embedding of
 # SVG images, and French language support
-RUN apt install -qq -y \
+RUN apt update && apt install -qq -y --no-install-recommends \
     inkscape \
     texlive-lang-french
 
