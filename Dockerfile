@@ -1,4 +1,12 @@
-FROM debian AS base
+FROM debian:buster-20210511 AS base
+
+ARG dblatex_version=0.3.10-2
+ARG inkscape_version=0.92.4-3
+ARG texlive_lang_french_version=2018.20190227-2
+
+ENV DBLATEX_VERSION=${dblatex_version} \
+  INKSCAPE_VERSION=${inkscape_version} \
+  TEXLIVE_LANG_FRENCH_VERSION=${texlive_lang_french_version}
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -8,10 +16,11 @@ FROM debian AS base
 FROM base AS main-minimal
 RUN echo "assemble minimal main image" # keep here to help --cache-from along
 
-LABEL MAINTAINERS="Elias Leinenweber <elias.leinenweber@free.fr>"
+LABEL MAINTAINER="Elias Leinenweber <elias.leinenweber@free.fr>"
 
-RUN apt update && apt install -qq -y --no-install-recommends \
-    dblatex
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    "dblatex=${DBLATEX_VERSION}"
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Final image
@@ -20,13 +29,12 @@ RUN apt update && apt install -qq -y --no-install-recommends \
 FROM main-minimal AS main
 RUN echo "assemble comprehensive main image" # keep here to help --cache-from along
 
-LABEL MAINTAINERS="Elias Leinenweber <elias.leinenweber@free.fr>"
+LABEL MAINTAINER="Elias Leinenweber <elias.leinenweber@free.fr>"
 
-# Installing packages required for the embedding of
-# SVG images, and French language support
-RUN apt update && apt install -qq -y --no-install-recommends \
-    inkscape \
-    texlive-lang-french
+# Installing packages for additional functionality
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    "inkscape=${INKSCAPE_VERSION}" \
+    "texlive-lang-french=${TEXLIVE_LANG_FRENCH_VERSION}"
 
 WORKDIR /documents
 VOLUME /documents
